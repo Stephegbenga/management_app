@@ -1,16 +1,17 @@
 import React, { useState } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import { parse, isWithinInterval } from 'date-fns';
 import './sold_list.css';
 
 const SoldList = () => {
   const initialSoldProducts = [
-    { name: 'JAL10/2024', productNumber: 'B10001', registrationDate: '2024/2/13', soldDate: '2024/3/10', purchasePrice: 1000, sellingPrice: 2000, sold: 2 },
-    { name: 'JAL10/2024', productNumber: 'B10002', registrationDate: '2024/2/14', soldDate: '2024/3/10', purchasePrice: 1000, sellingPrice: 2000, sold: 2 },
-    { name: 'JAL10/2024', productNumber: 'B10006', registrationDate: '2024/2/20', soldDate: '2024/3/21', purchasePrice: 1000, sellingPrice: 2000, sold: 2 },
-    { name: 'JAL10/2024', productNumber: 'B10008', registrationDate: '2024/3/2', soldDate: '2024/4/12', purchasePrice: 1000, sellingPrice: 1900, sold: 2 },
-    { name: 'JAL10/2024', productNumber: 'B10009', registrationDate: '2024/3/2', soldDate: '2024/4/17', purchasePrice: 1000, sellingPrice: 1900, sold: 2 },
-    { name: 'JAL10/2024', productNumber: 'B10010', registrationDate: '2024/3/2', soldDate: '2024/4/17', purchasePrice: 1000, sellingPrice: 1900, sold: 2 },
+    { name: 'JAL10/2024', productNumber: 'B10001', registrationDate: '13/02/2024', soldDate: '10/03/2024', purchasePrice: 1000, sellingPrice: 2000, sold: 2 },
+    { name: 'JAL10/2024', productNumber: 'B10002', registrationDate: '14/02/2024', soldDate: '10/03/2024', purchasePrice: 1000, sellingPrice: 2000, sold: 2 },
+    { name: 'JAL10/2024', productNumber: 'B10006', registrationDate: '20/02/2024', soldDate: '21/03/2024', purchasePrice: 1000, sellingPrice: 2000, sold: 2 },
+    { name: 'JAL10/2024', productNumber: 'B10008', registrationDate: '02/03/2024', soldDate: '12/04/2024', purchasePrice: 1000, sellingPrice: 1900, sold: 2 },
+    { name: 'JAL10/2024', productNumber: 'B10009', registrationDate: '02/03/2024', soldDate: '17/04/2024', purchasePrice: 1000, sellingPrice: 1900, sold: 2 },
+    { name: 'JAL10/2024', productNumber: 'B10010', registrationDate: '02/03/2024', soldDate: '17/04/2024', purchasePrice: 1000, sellingPrice: 1900, sold: 2 },
   ];
 
   const [soldProducts, setSoldProducts] = useState(initialSoldProducts);
@@ -22,8 +23,13 @@ const SoldList = () => {
   };
 
   const filteredProducts = soldProducts.filter(product => {
-    const soldDate = new Date(product.soldDate);
-    return soldDate >= startDate && soldDate <= endDate;
+    try {
+      const soldDate = parse(product.soldDate, 'dd/MM/yyyy', new Date());
+      return isWithinInterval(soldDate, { start: startDate, end: endDate });
+    } catch (error) {
+      console.error(`Error parsing sold date: ${error}`);
+      return false;
+    }
   });
 
   const calculateTotals = (products) => {
@@ -38,7 +44,7 @@ const SoldList = () => {
   return (
     <div className="sold-list-page">
       <h1>Sold list</h1>
-      <div style={{marginTop: 20}} className="date-picker-container">
+      <div style={{ marginTop: 20 }} className="date-picker-container">
         <h3>From</h3>
         <DatePicker
           selected={startDate}
@@ -46,10 +52,9 @@ const SoldList = () => {
           selectsStart
           startDate={startDate}
           endDate={endDate}
-          dateFormat="yyyy/MM/dd"
+          dateFormat="dd/MM/yyyy"
         />
-                <h3>To</h3>
-
+        <h3>To</h3>
         <DatePicker
           selected={endDate}
           onChange={(date) => handleFilterChange(date, setEndDate)}
@@ -57,7 +62,7 @@ const SoldList = () => {
           startDate={startDate}
           endDate={endDate}
           minDate={startDate}
-          dateFormat="yyyy/MM/dd"
+          dateFormat="dd/MM/yyyy"
         />
         <button onClick={() => handleFilterChange(new Date(), setEndDate)}>Filter</button>
       </div>
