@@ -6,6 +6,7 @@ import './style.css'
 import Home from './views/home'
 import Register from "./views/register"
 import ExhibitionList from './views/exhibitionlist'
+import SoldList from "./views/sold_list"
 
 const App = () => {
   return (
@@ -14,6 +15,7 @@ const App = () => {
         <Route component={Register} exact path="/" />
         <Route component={Register} exact path="/register" />
         <Route component={ExhibitionList} exact path="/exhibitionlist" />
+        <Route component={SoldList} exact path="/soldlist" />
 
       </div>
     </Router>
