@@ -38,7 +38,8 @@ const SoldList = () => {
   return (
     <div className="sold-list-page">
       <h1>Sold list</h1>
-      <div className="date-picker-container">
+      <div style={{marginTop: 20}} className="date-picker-container">
+        <h3>From</h3>
         <DatePicker
           selected={startDate}
           onChange={(date) => handleFilterChange(date, setStartDate)}
@@ -47,6 +48,8 @@ const SoldList = () => {
           endDate={endDate}
           dateFormat="yyyy/MM/dd"
         />
+                <h3>To</h3>
+
         <DatePicker
           selected={endDate}
           onChange={(date) => handleFilterChange(date, setEndDate)}
