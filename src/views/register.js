@@ -1,57 +1,28 @@
-// import React, {useEffect, useState} from "react";
 
-// import {Helmet} from "react-helmet";
-
-// const Register = (props) => {
-//   const [botName, setBotName] = useState("");
-
-//   useEffect(() => {
-//     const onLoad = async () => {};
-//     onLoad();
-//   }, []);
-
-//   return (
-//     <div style={{width: "100%", height: "100vh", display: "flex", alignItems: "center", justifyContent: "center"}}>
-//       <div style={{borderColor: "black", borderWidth: 2, width: "80%", height: "80%", display: "flex", flexDirection: "column"}}>
-//         {/* head */}
-//         <div style={{display: "flex", flex: 1, flexDirection: "row", width: "100%"}}>
-//           <div style={{height: 40, width: 120, display: "flex", alignItems: "center", justifyContent: "center",borderBottomWidth:2}}>
-//             <p>Hello</p>
-//           </div>
-
-//           <div style={{flex: 1, height: "70%", flexDirection:"column", borderColor: "black", borderBottomWidth: 2, borderLeftWidth: 2 }}>
-//           <div style={{height: 40, display: "flex", alignItems: "center", justifyContent: "center",borderBottomWidth:2}}>
-//           </div>
-
-//           </div>
-//         </div>
-
-//         <div style={{display: "flex", flexDirection: "row", width: "100%", height: 40, borderTopWidth: 2, borderColor: "black"}}>
-//           <div style={{width: 120, display: "flex", alignItems: "center", justifyContent: "center", }}>
-//             <p>Purchase Price</p>
-//           </div>
-
-//           <div style={{display: "flex", flex: 1, alignItems: "center", justifyContent: "center", borderLeftWidth: 2, borderColor: "black"}}>
-//             <input style={{width: "80%", color: "inherit"}} />
-//           </div>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default Register;
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './Register.css';
+import { upload_file, get_product_names, save_new_product_name} from '../api';
+import {message as toast} from "antd"
+
 
 const Register = () => {
-  const [products, setProducts] = useState([
-    'ANA5/2024', 'ANA12/2024', 'JAL6/2024', 'JAL12/2024', 'JR', 'PEACH4/2024', 'JetStar 7/2024'
-  ]);
+  const [products, setProducts] = useState([]);
   const [selectedProduct, setSelectedProduct] = useState('');
   const [purchasePrice, setPurchasePrice] = useState('');
-  const [pdfFiles, setPdfFiles] = useState([]);
+  const [file_url, setFile_url] = useState('');
+  const [uploading, setUploading] = useState(false)
   const [newProduct, setNewProduct] = useState('');
+
+  useEffect(() =>  {
+    async function load_product_names(){
+      let response = await get_product_names()
+      if(response){
+        setProducts(response.data)
+      }
+    }
+
+    load_product_names()
+  }, []);
 
   const handleProductChange = (event) => {
     setSelectedProduct(event.target.value);
@@ -61,25 +32,36 @@ const Register = () => {
     setPurchasePrice(event.target.value);
   };
 
-  const handlePdfUpload = (event) => {
-    const files = Array.from(event.target.files);
-    setPdfFiles(files);
+  const handlePdfUpload = async (event) => {
+    const file =event.target.files[0]
+    toast.info("Uploading file")
+    setUploading(true)
+    let response = await upload_file(file)
+    if(response){
+      toast.success("Upload completed")
+      setFile_url(response.url)
+    }
+
   };
 
   const handleAddMore = () => {
     if (newProduct) {
       setProducts([...products, newProduct]);
+      save_new_product_name(newProduct)
       setNewProduct('');
     }
   };
 
   const handleAddProduct = () => {
-    if (selectedProduct && purchasePrice && pdfFiles.length > 0) {
-      console.log('Product added:', selectedProduct, purchasePrice, pdfFiles);
+    if (selectedProduct && purchasePrice) {
+      let new_product ={product_name: selectedProduct, purchase_price: purchasePrice}
+      console.log(new_product)
       // Reset form fields
       setSelectedProduct('');
       setPurchasePrice('');
-      setPdfFiles([]);
+      setFile_url('')
+    }else{
+      toast.error("Please fill in all details")
     }
   };
 
@@ -95,12 +77,13 @@ const Register = () => {
           ))}
         </select>
         <input
+          style={{marginTop: 20}}
           type="text"
           value={newProduct}
           onChange={(e) => setNewProduct(e.target.value)}
           placeholder="Add new product"
         />
-        <button className="add-more-btn" onClick={handleAddMore}>Add more</button>
+        <button className="add-more-btn" onClick={handleAddMore}>Add</button>
       </div>
       <div className="upload-section">
         <label htmlFor="pdf-upload">Paste or drag the product data (PDF) here:</label>
