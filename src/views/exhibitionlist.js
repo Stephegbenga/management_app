@@ -25,8 +25,8 @@ const ExhibitionList = () => {
   };
 
   const calculateTotals = () => {
-    const totalPurchasePrice = products.reduce((total, product) => total + product.purchase_price, 0);
-    const totalSellingPrice = products.reduce((total, product) => total + product.selling_price, 0);
+    const totalPurchasePrice = products.reduce((total, product) => total + Number(product.purchase_price), 0);
+    const totalSellingPrice = products.reduce((total, product) => total + Number(product.selling_price), 0);
     const totalSold = products.filter(product => product.sold).length;
     return { totalPurchasePrice, totalSellingPrice, totalSold };
   };

@@ -6,12 +6,12 @@ import './sold_list.css';
 
 const SoldList = () => {
   const initialSoldProducts = [
-    { name: 'JAL10/2024', productNumber: 'B10001', registrationDate: '13/02/2024', soldDate: '10/03/2024', purchasePrice: 1000, sellingPrice: 2000, sold: 2 },
-    { name: 'JAL10/2024', productNumber: 'B10002', registrationDate: '14/02/2024', soldDate: '10/03/2024', purchasePrice: 1000, sellingPrice: 2000, sold: 2 },
-    { name: 'JAL10/2024', productNumber: 'B10006', registrationDate: '20/02/2024', soldDate: '21/03/2024', purchasePrice: 1000, sellingPrice: 2000, sold: 2 },
-    { name: 'JAL10/2024', productNumber: 'B10008', registrationDate: '02/03/2024', soldDate: '12/04/2024', purchasePrice: 1000, sellingPrice: 1900, sold: 2 },
-    { name: 'JAL10/2024', productNumber: 'B10009', registrationDate: '02/03/2024', soldDate: '17/04/2024', purchasePrice: 1000, sellingPrice: 1900, sold: 2 },
-    { name: 'JAL10/2024', productNumber: 'B10010', registrationDate: '02/03/2024', soldDate: '17/04/2024', purchasePrice: 1000, sellingPrice: 1900, sold: 2 },
+    // { name: 'JAL10/2024', productNumber: 'B10001', registrationDate: '13/02/2024', soldDate: '10/03/2024', purchasePrice: 1000, sellingPrice: 2000, sold: 2 },
+    // { name: 'JAL10/2024', productNumber: 'B10002', registrationDate: '14/02/2024', soldDate: '10/03/2024', purchasePrice: 1000, sellingPrice: 2000, sold: 2 },
+    // { name: 'JAL10/2024', productNumber: 'B10006', registrationDate: '20/02/2024', soldDate: '21/03/2024', purchasePrice: 1000, sellingPrice: 2000, sold: 2 },
+    // { name: 'JAL10/2024', productNumber: 'B10008', registrationDate: '02/03/2024', soldDate: '12/04/2024', purchasePrice: 1000, sellingPrice: 1900, sold: 2 },
+    // { name: 'JAL10/2024', productNumber: 'B10009', registrationDate: '02/03/2024', soldDate: '17/04/2024', purchasePrice: 1000, sellingPrice: 1900, sold: 2 },
+    // { name: 'JAL10/2024', productNumber: 'B10010', registrationDate: '02/03/2024', soldDate: '17/04/2024', purchasePrice: 1000, sellingPrice: 1900, sold: 2 },
   ];
 
   const [soldProducts, setSoldProducts] = useState(initialSoldProducts);
