@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import './Register.css';
-import { upload_file, get_product_names, save_new_product_name} from '../api';
+import { upload_file, get_product_names, save_new_product_name, save_new_product} from '../api';
 import {message as toast} from "antd"
 
 
@@ -40,6 +40,7 @@ const Register = () => {
     if(response){
       toast.success("Upload completed")
       setFile_url(response.url)
+      setUploading(false)
     }
 
   };
@@ -52,10 +53,16 @@ const Register = () => {
     }
   };
 
-  const handleAddProduct = () => {
-    if (selectedProduct && purchasePrice) {
-      let new_product ={product_name: selectedProduct, purchase_price: purchasePrice}
-      console.log(new_product)
+  const handleAddProduct = async () => {
+    if(uploading){
+      return toast.error("File still uploading")
+    }
+
+    if (selectedProduct && purchasePrice && file_url) {
+      let new_product ={name: selectedProduct, purchase_price: purchasePrice, file_url}
+      let response = await save_new_product(JSON.stringify(new_product))
+      console.log(response)
+      toast.success(response.message)
       // Reset form fields
       setSelectedProduct('');
       setPurchasePrice('');
@@ -98,7 +105,7 @@ const Register = () => {
       <div className="price-section">
         <label htmlFor="purchase-price">Purchase price</label>
         <input
-          type="text"
+          type="number"
           id="purchase-price"
           value={purchasePrice}
           onChange={handlePurchasePriceChange}

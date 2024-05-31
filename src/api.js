@@ -1,6 +1,8 @@
 import {message as toast} from "antd";
 
 const base_url = "https://managament-app-backend.onrender.com";
+// const base_url = "http://localhost:5000";
+
 
 const upload_file = async (file) => {
   const formData = new FormData();
@@ -80,7 +82,57 @@ const get_product_names = async () => {
     }
   }
 
+
+  const save_new_product = async (data) => {
+    try {
+      const response = await fetch(`${base_url}/product`, {
+        method: "post",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: data,
+      });
+  
+      if (!response.ok) {
+        const errorResponse = await response.json();
+        const errorMessage = errorResponse.message;
+        toast.error(errorMessage);
+        return 
+      }
+  
+      const result = await response.json();
+      return result;
+    } catch (error) {
+      toast.error(error.message);
+      return null;
+    }
+  }
+
+
+  const get_product = async (type) => {
+    try {
+      const response = await fetch(`${base_url}/product?type=${type}`, {
+        method: "get",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+  
+      if (!response.ok) {
+        const errorResponse = await response.json();
+        const errorMessage = errorResponse.message;
+        toast.error(errorMessage);
+        return 
+      }
+  
+      const result = await response.json();
+      return result;
+    } catch (error) {
+      toast.error(error.message);
+      return null;
+    }
+  }
   
 
 
-export {upload_file, get_product_names, save_new_product_name};
+export {upload_file, get_product_names, save_new_product_name, save_new_product, get_product};

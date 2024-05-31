@@ -1,29 +1,32 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import {get_product} from "../api"
+import {convertTimestampToDate} from "../util"
 import './ExhibitionList.css';
 
 const ExhibitionList = () => {
-  const initialProducts = [
-    { name: 'ANA5/2024', productNumber: 'A10001', registrationDate: '2024/2/13', purchasePrice: 1000, sellingPrice: 2000, sold: false },
-    { name: 'ANA5/2024', productNumber: 'A10002', registrationDate: '2024/2/14', purchasePrice: 1000, sellingPrice: 2000, sold: false },
-    { name: 'ANA5/2024', productNumber: 'A10003', registrationDate: '2024/2/14', purchasePrice: 1000, sellingPrice: 2000, sold: false },
-    { name: 'ANA5/2024', productNumber: 'A10004', registrationDate: '2024/2/14', purchasePrice: 1000, sellingPrice: 2000, sold: false },
-    { name: 'ANA5/2024', productNumber: 'A10005', registrationDate: '2024/2/20', purchasePrice: 1000, sellingPrice: 2000, sold: false },
-    { name: 'ANA5/2024', productNumber: 'A10006', registrationDate: '2024/2/20', purchasePrice: 1000, sellingPrice: 2000, sold: false },
-    { name: 'ANA5/2024', productNumber: 'A10009', registrationDate: '2024/3/2', purchasePrice: 1000, sellingPrice: 2000, sold: false },
-    { name: 'ANA5/2024', productNumber: 'A10010', registrationDate: '2024/3/2', purchasePrice: 1000, sellingPrice: 2000, sold: false }
-  ];
+  const [products, setProducts] = useState([]);
 
-  const [products, setProducts] = useState(initialProducts);
+  useEffect(() =>  {
+    async function load_products(){
+      let response = await get_product("exhibition")
+      if(response){
+        setProducts(response.data)
+      }
+    }
+
+    load_products()
+  }, []);
+
 
   const handleMarkAsSold = (productNumber) => {
     setProducts(products.map(product => 
-      product.productNumber === productNumber ? { ...product, sold: true, soldDate: new Date().toISOString().split('T')[0] } : product
+      product.product_no === productNumber ? { ...product, sold: true, soldDate: new Date().toISOString().split('T')[0] } : product
     ));
   };
 
   const calculateTotals = () => {
-    const totalPurchasePrice = products.reduce((total, product) => total + product.purchasePrice, 0);
-    const totalSellingPrice = products.reduce((total, product) => total + product.sellingPrice, 0);
+    const totalPurchasePrice = products.reduce((total, product) => total + product.purchase_price, 0);
+    const totalSellingPrice = products.reduce((total, product) => total + product.selling_price, 0);
     const totalSold = products.filter(product => product.sold).length;
     return { totalPurchasePrice, totalSellingPrice, totalSold };
   };
@@ -49,17 +52,17 @@ const ExhibitionList = () => {
           {products.map(product => (
             <tr key={product.productNumber} className={product.sold ? 'sold' : ''}>
               <td>{product.name}</td>
-              <td>{product.productNumber}</td>
-              <td>{product.registrationDate}</td>
+              <td>{product.product_no}</td>
+              <td>{convertTimestampToDate(product.registration_date)}</td>
               <td>{product.sold ? product.soldDate : ''}</td>
-              <td>{product.purchasePrice}</td>
+              <td>{product.purchase_price}</td>
               <td>{product.sellingPrice}</td>
               <td>
-                {product.sold ? (
+                {/* {product.sold ? (
                   '2'
                 ) : (
                   <button onClick={() => handleMarkAsSold(product.productNumber)}>1</button>
-                )}
+                )} */}
               </td>
             </tr>
           ))}
@@ -68,7 +71,7 @@ const ExhibitionList = () => {
           <tr>
             <td colSpan="4">Total</td>
             <td>{totalPurchasePrice}</td>
-            <td>{totalSellingPrice}</td>
+            <td>{isNaN(totalSellingPrice) ? '' : totalSellingPrice}</td>
             <td>{totalSold}</td>
           </tr>
         </tfoot>
