@@ -129,7 +129,7 @@ const SoldList = () => {
               <td>{product.name}</td>
               <td>{product.product_no}</td>
               <td>{convertTimestampToDate(product.registration_date)}</td>
-              <td>{product.soldDate ? convertTimestampToDate(product.soldDate) : ''}</td>
+              <td>{product.sold_date ? convertTimestampToDate(product.sold_date) : ''}</td>
               <td>{product.purchase_price}</td>
               <td>{get_selling_price(product.name)}</td>
               <td>2</td>
