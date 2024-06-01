@@ -17,7 +17,7 @@ label {
   font-weight: bold;
 }
 
-select, input[type="text"], input[type="file"] {
+select, input[type="text"], input[type="file"], #purchase-price {
   width: 100%;
   padding: 10px;
   margin-bottom: 10px;

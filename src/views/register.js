@@ -1,17 +1,18 @@
 
 import React, { useState, useEffect } from 'react';
 import './Register.css';
-import { upload_file, get_product_names, save_new_product_name, save_new_product} from '../api';
+import { upload_file, get_product_names, save_new_product_name} from '../api';
 import {message as toast} from "antd"
-
+import Loading from "../component/loading"
+import {base_url} from "../config"
 
 const Register = () => {
   const [products, setProducts] = useState([]);
   const [selectedProduct, setSelectedProduct] = useState('');
   const [purchasePrice, setPurchasePrice] = useState('');
-  const [file_url, setFile_url] = useState('');
-  const [uploading, setUploading] = useState(false)
+  const [loading, setLoading] = useState(false)
   const [newProduct, setNewProduct] = useState('');
+  const [files, setFiles] = useState([]);
 
   useEffect(() =>  {
     async function load_product_names(){
@@ -24,6 +25,41 @@ const Register = () => {
     load_product_names()
   }, []);
 
+
+
+  const add_new_products = async (files, additionalData) => {
+    const formData = new FormData();
+    Array.from(files).forEach(file => {
+      formData.append("files", file);
+    });
+  
+    // Append the JSON data as a string
+    formData.append("data", JSON.stringify(additionalData));
+  
+    try {
+      const response = await fetch(base_url + "/product", {
+        method: "POST",
+        body: formData,
+      });
+  
+      if (!response.ok) {
+        const errorResponse = await response.json();
+        const errorMessage = errorResponse.message;
+        toast.error(errorMessage);
+        return;
+      }
+  
+      const result = await response.json();
+      return result;
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
+
+
+
+
+
   const handleProductChange = (event) => {
     setSelectedProduct(event.target.value);
   };
@@ -32,18 +68,11 @@ const Register = () => {
     setPurchasePrice(event.target.value);
   };
 
-  const handlePdfUpload = async (event) => {
-    const file =event.target.files[0]
-    toast.info("Uploading file")
-    setUploading(true)
-    let response = await upload_file(file)
-    if(response){
-      toast.success("Upload completed")
-      setFile_url(response.url)
-      setUploading(false)
-    }
-
+  const handle_pdf_selection = async (event) => {
+    const files =event.target.files
+    setFiles(files)
   };
+
 
   const handleAddMore = () => {
     if (newProduct) {
@@ -54,14 +83,12 @@ const Register = () => {
   };
 
   const handleAddProduct = async () => {
-    if(uploading){
-      return toast.error("File still uploading")
-    }
 
-    if (selectedProduct && purchasePrice && file_url) {
-      let new_product ={name: selectedProduct, purchase_price: purchasePrice, file_url}
-      let response = await save_new_product(JSON.stringify(new_product))
-      console.log(response)
+    if (selectedProduct && purchasePrice && files.length != 0) {
+      let new_product ={name: selectedProduct, purchase_price: purchasePrice}
+      setLoading(true)
+      let response = await add_new_products(files, new_product)
+      setLoading(false)
       toast.success(response.message)
       // Reset form fields
       setSelectedProduct('');
@@ -99,7 +126,7 @@ const Register = () => {
           id="pdf-upload"
           multiple
           accept=".pdf"
-          onChange={handlePdfUpload}
+          onChange={handle_pdf_selection}
         />
       </div>
       <div className="price-section">
@@ -112,6 +139,7 @@ const Register = () => {
         />
       </div>
       <button className="add-product-btn" onClick={handleAddProduct}>Add Product</button>
+      <Loading isVisible={loading} message="Uploading new products" />
     </div>
   );
 };

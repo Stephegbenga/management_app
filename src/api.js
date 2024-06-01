@@ -1,12 +1,12 @@
 import {message as toast} from "antd";
-
-const base_url = "https://managament-app-backend.onrender.com";
-// const base_url = "http://localhost:5000";
+import {base_url} from "./config"
 
 
-const upload_file = async (file) => {
+const upload_file = async (files) => {
   const formData = new FormData();
-  formData.append("file", file);
+  Array.from(files).forEach(file => {
+    formData.append("files", file);
+  });
 
   try {
     const response = await fetch(base_url + "/upload", {
@@ -133,6 +133,9 @@ const get_product_names = async () => {
     }
   }
   
+
+  
+
 
 
 export {upload_file, get_product_names, save_new_product_name, save_new_product, get_product};
