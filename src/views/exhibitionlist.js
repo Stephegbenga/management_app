@@ -18,7 +18,6 @@ const ExhibitionList = () => {
       let response = await get_product_names();
       if (response) {
         setProduct_names(response.data);
-        setSelectedProduct(response.data[0]);
       }
     }
 
@@ -26,9 +25,17 @@ const ExhibitionList = () => {
   }, []);
 
   useEffect(() => {
-    const filteredProducts = products.filter(product => product.name === selectedProduct);
-    setFiltered_products(filteredProducts);
-  }, [selectedProduct, products]);
+    const filteredProducts = products
+    .filter(product => product.name === selectedProduct)
+    .map(product => {
+      const productNameObj = product_names.find(pn => pn.name === product.name);
+      return {
+        ...product,
+        selling_price: productNameObj ? productNameObj.selling_price : ""
+      };
+    });
+  setFiltered_products(filteredProducts);
+  }, [selectedProduct, products, product_names]);
 
   useEffect(() => {
     async function load_products() {
@@ -54,6 +61,14 @@ const ExhibitionList = () => {
     return { totalPurchasePrice, totalSellingPrice, totalSold };
   };
 
+  const get_selling_price = (product_name) => {
+    console.log(product_name)
+    const product = product_names.find((product) => product.name === product_name);
+    console.log(product)
+    return product ? product.selling_price : "";
+  };
+
+
   const { totalPurchasePrice, totalSellingPrice, totalSold } = calculateTotals();
 
   return (
@@ -62,7 +77,7 @@ const ExhibitionList = () => {
       <select id="product-select" value={selectedProduct} style={{ marginBottom: 20 }} onChange={handleProductChange}>
         <option value="" disabled>Select product</option>
         {product_names.map((product, index) => (
-          <option key={index} value={product}>{product}</option>
+          <option key={index} value={product.name}>{product.name}</option>
         ))}
       </select>
 
@@ -87,7 +102,7 @@ const ExhibitionList = () => {
               <td>{convertTimestampToDate(product.registration_date)}</td>
               <td>{product.soldDate ? convertTimestampToDate(product.soldDate) : ''}</td>
               <td>{product.purchase_price}</td>
-              <td>{product.selling_price}</td>
+              <td>{get_selling_price(product.name)}</td>
               <td>
               1
               </td>

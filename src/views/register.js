@@ -107,7 +107,7 @@ const Register = () => {
         <select id="product-select" value={selectedProduct} onChange={handleProductChange}>
           <option value="" disabled>Select product</option>
           {products.map((product, index) => (
-            <option key={index} value={product}>{product}</option>
+            <option key={index} value={product.name}>{product.name}</option>
           ))}
         </select>
         <input
