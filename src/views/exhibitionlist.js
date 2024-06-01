@@ -48,11 +48,6 @@ const ExhibitionList = () => {
     load_products();
   }, []);
 
-  const handleMarkAsSold = (productNumber) => {
-    setProducts(products.map(product =>
-      product.product_no === productNumber ? { ...product, sold: true, soldDate: new Date().toISOString().split('T')[0] } : product
-    ));
-  };
 
   const calculateTotals = () => {
     const totalPurchasePrice = filtered_products.reduce((total, product) => total + Number(product.purchase_price), 0);
