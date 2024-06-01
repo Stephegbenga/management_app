@@ -13,7 +13,9 @@ const SoldList = () => {
   const [product_names, setProduct_names] = useState([]);
   const [selectedProduct, setSelectedProduct] = useState('');
   const [filtered_products, setFiltered_products] = useState([]);
-  const [startDate, setStartDate] = useState(new Date('2024-02-30'));
+  const [startDate, setStartDate] = useState(new Date('2024-02-20'));
+
+
   const [endDate, setEndDate] = useState(new Date());
 
   const handleProductChange = (event) => {
